@@ -32,31 +32,33 @@ func BroadcastTxAsync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadca
 // DeliverTx result.
 // More: https://docs.tendermint.com/v0.34/rpc/#/Tx/broadcast_tx_sync
 func BroadcastTxSync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-	resCh := make(chan *abci.Response, 1)
-	err := env.Mempool.CheckTx(tx, func(res *abci.Response) {
-		select {
-		case <-ctx.Context().Done():
-		case resCh <- res:
-		}
+	// resCh := make(chan *abci.Response, 1)
+	// err := env.Mempool.CheckTx(tx, func(res *abci.Response) {
+	// 	select {
+	// 	case <-ctx.Context().Done():
+	// 	case resCh <- res:
+	// 	}
 
-	}, mempl.TxInfo{})
-	if err != nil {
-		return nil, err
-	}
+	// }, mempl.TxInfo{})
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	select {
-	case <-ctx.Context().Done():
-		return nil, fmt.Errorf("broadcast confirmation not received: %w", ctx.Context().Err())
-	case res := <-resCh:
-		r := res.GetCheckTx()
-		return &ctypes.ResultBroadcastTx{
-			Code:      r.Code,
-			Data:      r.Data,
-			Log:       r.Log,
-			Codespace: r.Codespace,
-			Hash:      tx.Hash(),
-		}, nil
-	}
+	// select {
+	// case <-ctx.Context().Done():
+	// 	return nil, fmt.Errorf("broadcast confirmation not received: %w", ctx.Context().Err())
+	// case res := <-resCh:
+	// 	r := res.GetCheckTx()
+	// 	return &ctypes.ResultBroadcastTx{
+	// 		Code:      r.Code,
+	// 		Data:      r.Data,
+	// 		Log:       r.Log,
+	// 		Codespace: r.Codespace,
+	// 		Hash:      tx.Hash(),
+	// 	}, nil
+	// }
+
+	return &ctypes.ResultBroadcastTx{Hash: tx.Hash()}, nil
 }
 
 // BroadcastTxCommit returns with the responses from CheckTx and DeliverTx.
