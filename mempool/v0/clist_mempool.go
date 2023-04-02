@@ -251,10 +251,8 @@ func (mem *CListMempool) CheckTx(
 		return mempool.ErrTxInCache
 	}
 
-	// reqRes := mem.proxyAppConn.CheckTxAsync(abci.RequestCheckTx{Tx: tx})
-	// reqRes.SetCallback(mem.reqResCb(tx, txInfo.SenderID, txInfo.SenderP2PID, cb))
-
-	mem.reqResCb(tx, txInfo.SenderID, txInfo.SenderP2PID, cb)
+	reqRes := mem.proxyAppConn.CheckTxAsync(abci.RequestCheckTx{Tx: tx})
+	reqRes.SetCallback(mem.reqResCb(tx, txInfo.SenderID, txInfo.SenderP2PID, cb))
 
 	return nil
 }
