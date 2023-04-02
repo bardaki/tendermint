@@ -1,7 +1,6 @@
 package v0
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -171,16 +170,16 @@ func (memR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 			txInfo.SenderP2PID = e.Src.ID()
 		}
 
-		var err error
-		for _, tx := range protoTxs {
-			ntx := types.Tx(tx)
-			err = memR.mempool.CheckTx(ntx, nil, txInfo)
-			if errors.Is(err, mempool.ErrTxInCache) {
-				memR.Logger.Debug("Tx already exists in cache", "tx", ntx.String())
-			} else if err != nil {
-				memR.Logger.Info("Could not check tx", "tx", ntx.String(), "err", err)
-			}
-		}
+		// var err error
+		// for _, tx := range protoTxs {
+		// 	ntx := types.Tx(tx)
+		// 	err = memR.mempool.CheckTx(ntx, nil, txInfo)
+		// 	if errors.Is(err, mempool.ErrTxInCache) {
+		// 		memR.Logger.Debug("Tx already exists in cache", "tx", ntx.String())
+		// 	} else if err != nil {
+		// 		memR.Logger.Info("Could not check tx", "tx", ntx.String(), "err", err)
+		// 	}
+		// }
 	default:
 		memR.Logger.Error("unknown message type", "src", e.Src, "chId", e.ChannelID, "msg", e.Message)
 		memR.Switch.StopPeerForError(e.Src, fmt.Errorf("mempool cannot handle message of type: %T", e.Message))
