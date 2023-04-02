@@ -216,20 +216,20 @@ func (mem *CListMempool) CheckTx(
 		return err
 	}
 
-	if txSize > mem.config.MaxTxBytes {
-		return mempool.ErrTxTooLarge{
-			Max:    mem.config.MaxTxBytes,
-			Actual: txSize,
-		}
-	}
+	// if txSize > mem.config.MaxTxBytes {
+	// 	return mempool.ErrTxTooLarge{
+	// 		Max:    mem.config.MaxTxBytes,
+	// 		Actual: txSize,
+	// 	}
+	// }
 
-	if mem.preCheck != nil {
-		if err := mem.preCheck(tx); err != nil {
-			return mempool.ErrPreCheck{
-				Reason: err,
-			}
-		}
-	}
+	// if mem.preCheck != nil {
+	// 	if err := mem.preCheck(tx); err != nil {
+	// 		return mempool.ErrPreCheck{
+	// 			Reason: err,
+	// 		}
+	// 	}
+	// }
 
 	// NOTE: proxyAppConn may error if tx buffer is full
 	if err := mem.proxyAppConn.Error(); err != nil {
@@ -251,8 +251,10 @@ func (mem *CListMempool) CheckTx(
 		return mempool.ErrTxInCache
 	}
 
-	reqRes := mem.proxyAppConn.CheckTxAsync(abci.RequestCheckTx{Tx: tx})
-	reqRes.SetCallback(mem.reqResCb(tx, txInfo.SenderID, txInfo.SenderP2PID, cb))
+	// reqRes := mem.proxyAppConn.CheckTxAsync(abci.RequestCheckTx{Tx: tx})
+	// reqRes.SetCallback(mem.reqResCb(tx, txInfo.SenderID, txInfo.SenderP2PID, cb))
+
+	mem.reqResCb(tx, txInfo.SenderID, txInfo.SenderP2PID, cb)
 
 	return nil
 }

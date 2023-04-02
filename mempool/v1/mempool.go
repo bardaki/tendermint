@@ -183,17 +183,17 @@ func (txmp *TxMempool) CheckTx(tx types.Tx, cb func(*abci.Response), txInfo memp
 		txmp.mtx.RLock()
 		defer txmp.mtx.RUnlock()
 
-		// Reject transactions in excess of the configured maximum transaction size.
-		if len(tx) > txmp.config.MaxTxBytes {
-			return 0, mempool.ErrTxTooLarge{Max: txmp.config.MaxTxBytes, Actual: len(tx)}
-		}
+		// // Reject transactions in excess of the configured maximum transaction size.
+		// if len(tx) > txmp.config.MaxTxBytes {
+		// 	return 0, mempool.ErrTxTooLarge{Max: txmp.config.MaxTxBytes, Actual: len(tx)}
+		// }
 
-		// If a precheck hook is defined, call it before invoking the application.
-		if txmp.preCheck != nil {
-			if err := txmp.preCheck(tx); err != nil {
-				return 0, mempool.ErrPreCheck{Reason: err}
-			}
-		}
+		// // If a precheck hook is defined, call it before invoking the application.
+		// if txmp.preCheck != nil {
+		// 	if err := txmp.preCheck(tx); err != nil {
+		// 		return 0, mempool.ErrPreCheck{Reason: err}
+		// 	}
+		// }
 
 		// Early exit if the proxy connection has an error.
 		if err := txmp.proxyAppConn.Error(); err != nil {
