@@ -39,7 +39,7 @@ func BroadcastTxSync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadcas
 		case resCh <- res:
 		}
 
-	}, mempl.TxInfo{})
+	}, mempl.TxInfo{}) //bla
 	if err != nil {
 		return nil, err
 	}
