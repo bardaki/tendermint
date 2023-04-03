@@ -216,20 +216,20 @@ func (mem *CListMempool) CheckTx(
 		return err
 	}
 
-	// if txSize > mem.config.MaxTxBytes {
-	// 	return mempool.ErrTxTooLarge{
-	// 		Max:    mem.config.MaxTxBytes,
-	// 		Actual: txSize,
-	// 	}
-	// }
+	if txSize > mem.config.MaxTxBytes {
+		return mempool.ErrTxTooLarge{
+			Max:    mem.config.MaxTxBytes,
+			Actual: txSize,
+		}
+	}
 
-	// if mem.preCheck != nil {
-	// 	if err := mem.preCheck(tx); err != nil {
-	// 		return mempool.ErrPreCheck{
-	// 			Reason: err,
-	// 		}
-	// 	}
-	// }
+	if mem.preCheck != nil {
+		if err := mem.preCheck(tx); err != nil {
+			return mempool.ErrPreCheck{
+				Reason: err,
+			}
+		}
+	}
 
 	// NOTE: proxyAppConn may error if tx buffer is full
 	if err := mem.proxyAppConn.Error(); err != nil {
