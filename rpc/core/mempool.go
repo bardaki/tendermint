@@ -34,7 +34,7 @@ func BroadcastTxAsync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadca
 // More: https://docs.tendermint.com/v0.34/rpc/#/Tx/broadcast_tx_sync
 func BroadcastTxSync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
 	startTime := time.Now()
-	env.Logger.Error(fmt.Sprintf("BroadcastTxSync Start for %s:  %s", hex.EncodeToString(tx.Hash()[:]), startTime.String()))
+	env.Logger.Error(fmt.Sprintf("BroadcastTxSync (tendermint) Start for %s:  %s", hex.EncodeToString(tx.Hash()[:]), startTime.String()))
 	resCh := make(chan *abci.Response, 1)
 	err := env.Mempool.CheckTx(tx, func(res *abci.Response) {
 		select {
@@ -53,7 +53,7 @@ func BroadcastTxSync(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadcas
 	case res := <-resCh:
 		r := res.GetCheckTx()
 		elapsedTime := time.Since(startTime)
-		env.Logger.Error(fmt.Sprintf("BroadcastTxSync latency: %s", elapsedTime.String()))
+		env.Logger.Error(fmt.Sprintf("BroadcastTxSync (tendermint) latency: %s", elapsedTime.String()))
 		return &ctypes.ResultBroadcastTx{
 			Code:      r.Code,
 			Data:      r.Data,
