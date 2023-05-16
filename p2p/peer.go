@@ -508,7 +508,6 @@ func createMConnection(
 	onPeerError func(Peer, interface{}),
 	config tmconn.MConnConfig,
 ) *tmconn.MConnection {
-
 	onReceive := func(chID byte, msgBytes []byte) {
 		reactor := reactorsByCh[chID]
 		if reactor == nil {
@@ -522,6 +521,11 @@ func createMConnection(
 		if err != nil {
 			panic(fmt.Errorf("unmarshaling message: %s into type: %s", err, reflect.TypeOf(mt)))
 		}
+		startTime := time.Now()
+		println("============================ createMConnection ===================================")
+		println("\033[31m"+"createMConnection (tendermint) Start :  %s", startTime.String()+"")
+		println("\033[31m"+"From peer ID :  %s", string(p.ID())+"")
+
 		labels := []string{
 			"peer_id", string(p.ID()),
 			"chID", fmt.Sprintf("%#x", chID),
