@@ -21,6 +21,7 @@ const (
 	EventNewEvidence         = "NewEvidence"
 	EventTx                  = "Tx"
 	EventValidatorSetUpdates = "ValidatorSetUpdates"
+	EventUnconfirmedTx       = "UnconfirmedTx"
 
 	// Internal consensus events.
 	// These are used for testing the consensus state machine.
@@ -56,6 +57,7 @@ func init() {
 	tmjson.RegisterType(EventDataVote{}, "tendermint/event/Vote")
 	tmjson.RegisterType(EventDataValidatorSetUpdates{}, "tendermint/event/ValidatorSetUpdates")
 	tmjson.RegisterType(EventDataString(""), "tendermint/event/ProposalString")
+	tmjson.RegisterType(EventDataUnconfirmedTx{}, "tendermint/event/UnconfirmedTx")
 }
 
 // Most event messages are basic types (a block, a transaction)
@@ -85,6 +87,10 @@ type EventDataNewEvidence struct {
 // All txs fire EventDataTx
 type EventDataTx struct {
 	abci.TxResult
+}
+
+type EventDataUnconfirmedTx struct {
+	Tx []byte `json:"bytes"`
 }
 
 // NOTE: This goes into the replay WAL
@@ -159,6 +165,7 @@ var (
 	EventQueryValidatorSetUpdates = QueryForEvent(EventValidatorSetUpdates)
 	EventQueryValidBlock          = QueryForEvent(EventValidBlock)
 	EventQueryVote                = QueryForEvent(EventVote)
+	EventQueryUnconfirmedTx       = QueryForEvent(EventUnconfirmedTx)
 )
 
 func EventQueryTxFor(tx Tx) tmpubsub.Query {
@@ -180,4 +187,8 @@ type BlockEventPublisher interface {
 
 type TxEventPublisher interface {
 	PublishEventTx(EventDataTx) error
+}
+
+type UnconfirmedTxEventPublisher interface {
+	PublishEventUnconfirmedTx(EventDataUnconfirmedTx) error
 }

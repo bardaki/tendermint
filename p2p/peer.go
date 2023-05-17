@@ -521,10 +521,6 @@ func createMConnection(
 		if err != nil {
 			panic(fmt.Errorf("unmarshaling message: %s into type: %s", err, reflect.TypeOf(mt)))
 		}
-		startTime := time.Now()
-		println("============================ createMConnection ===================================")
-		println("\033[31m"+"createMConnection (tendermint) Start :  %s", startTime.String()+"")
-		println("\033[31m"+"From peer ID :  %s", string(p.ID())+"")
 
 		labels := []string{
 			"peer_id", string(p.ID()),

@@ -181,6 +181,10 @@ func NumUnconfirmedTxs(ctx *rpctypes.Context) (*ctypes.ResultUnconfirmedTxs, err
 // be added to the mempool either.
 // More: https://docs.tendermint.com/v0.34/rpc/#/Tx/check_tx
 func CheckTx(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultCheckTx, error) {
+	env.Logger.Error("CheckTx (tendermint)", "err")
+	if err := env.EventBus.PublishEventUnconfirmedTx(types.EventDataUnconfirmedTx{Tx: tx}); err != nil {
+		env.Logger.Error("failed publishing event TX", "err", err)
+	}
 	res, err := env.ProxyAppMempool.CheckTxSync(abci.RequestCheckTx{Tx: tx})
 	if err != nil {
 		return nil, err
