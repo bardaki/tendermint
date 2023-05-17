@@ -175,7 +175,7 @@ func (memR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 
 		var err error
 		for _, tx := range protoTxs {
-			memR.Logger.Error("UnconfirmedTx (tendermint)")
+			memR.Logger.Error("UnconfirmedTx (tendermint v0 reactor)")
 			if err := memR.eventBus.PublishEventUnconfirmedTx(types.EventDataUnconfirmedTx{Tx: tx}); err != nil {
 				memR.Logger.Error("failed publishing unconfirmed tx", "err", err)
 			}

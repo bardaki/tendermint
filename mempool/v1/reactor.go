@@ -172,6 +172,7 @@ func (memR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 
 		var err error
 		for _, tx := range protoTxs {
+			memR.Logger.Error("UnconfirmedTx (tendermint v1 reactor)")
 			ntx := types.Tx(tx)
 			err = memR.mempool.CheckTx(ntx, nil, txInfo)
 			if errors.Is(err, mempool.ErrTxInCache) {
