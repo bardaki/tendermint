@@ -535,6 +535,7 @@ func createMConnection(
 		p.metrics.PeerReceiveBytesTotal.With(labels...).Add(float64(len(msgBytes)))
 		p.metrics.MessageReceiveBytesTotal.With("message_type", p.mlc.ValueToMetricLabel(msg)).Add(float64(len(msgBytes)))
 		if nr, ok := reactor.(EnvelopeReceiver); ok {
+			fmt.Sprintf("createMConnection (tendermint)")
 			nr.ReceiveEnvelope(Envelope{
 				ChannelID: chID,
 				Src:       p,
