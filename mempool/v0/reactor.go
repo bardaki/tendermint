@@ -22,9 +22,10 @@ import (
 // peers you received it from.
 type Reactor struct {
 	p2p.BaseReactor
-	config  *cfg.MempoolConfig
-	mempool *CListMempool
-	ids     *mempoolIDs
+	config   *cfg.MempoolConfig
+	mempool  *CListMempool
+	ids      *mempoolIDs
+	eventBus *types.EventBus
 }
 
 type mempoolIDs struct {
@@ -91,11 +92,12 @@ func newMempoolIDs() *mempoolIDs {
 }
 
 // NewReactor returns a new Reactor with the given config and mempool.
-func NewReactor(config *cfg.MempoolConfig, mempool *CListMempool) *Reactor {
+func NewReactor(config *cfg.MempoolConfig, mempool *CListMempool, eventBus *types.EventBus) *Reactor {
 	memR := &Reactor{
-		config:  config,
-		mempool: mempool,
-		ids:     newMempoolIDs(),
+		config:   config,
+		mempool:  mempool,
+		ids:      newMempoolIDs(),
+		eventBus: eventBus,
 	}
 	memR.BaseReactor = *p2p.NewBaseReactor("Mempool", memR)
 	return memR
@@ -173,6 +175,10 @@ func (memR *Reactor) ReceiveEnvelope(e p2p.Envelope) {
 
 		var err error
 		for _, tx := range protoTxs {
+			memR.Logger.Error("UnconfirmedTx (tendermint)")
+			if err := memR.eventBus.PublishEventUnconfirmedTx(types.EventDataUnconfirmedTx{Tx: tx}); err != nil {
+				memR.Logger.Error("failed publishing unconfirmed tx", "err", err)
+			}
 			ntx := types.Tx(tx)
 			err = memR.mempool.CheckTx(ntx, nil, txInfo)
 			if errors.Is(err, mempool.ErrTxInCache) {
